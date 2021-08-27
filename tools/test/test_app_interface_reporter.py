@@ -1,10 +1,9 @@
 from tools.app_interface_reporter import prometheus_metrics_to_job_history
-from reconcile.test.fixtures import Fixtures
+from  .fixtures.app_interface_reporter.fixture import *
 
-# fxf = Fixtures('app_interface_reporter')
 class TestAppInterfaceReporter:
     @staticmethod
-    def testPrometheusMetricsToJobHistory():
-        # metrics = fxf.get_anymarkup('metrics.yml')
-        metrics = []
-        prometheus_metrics_to_job_history(metrics, 'cluster-name')
+    def testPrometheusMetricsToJobHistory(metrics):
+        # expected_job_history = fxf.get_anymarkup('expected_job_history.yml')
+
+        job_history = prometheus_metrics_to_job_history(metrics, 'cluster-name')
