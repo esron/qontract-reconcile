@@ -195,23 +195,15 @@ def setup(
     thread_pool_size: int,
     internal: Optional[bool],
     use_jump_host: bool,
-    include_accounts: Optional[Collection[str]],
-    exclude_accounts: Optional[Collection[str]],
+    account_name: Optional[str],
 ) -> tuple[
     ResourceInventory, Optional[OCMap], Terraform, ExternalResourceSpecInventory
 ]:
     accounts = queries.get_aws_accounts(terraform_state=True)
-    if not include_accounts and exclude_accounts:
-        excluding = filter_accounts_by_name(accounts, exclude_accounts)
-        validate_account_names(excluding, exclude_accounts)
-        accounts = exclude_accounts_by_name(accounts, exclude_accounts)
-        if len(accounts) == 0:
-            raise ValueError("You have excluded all aws accounts, verify your input")
-        account_names = tuple(ac["name"] for ac in accounts)
-    elif include_accounts:
-        accounts = filter_accounts_by_name(accounts, include_accounts)
-        validate_account_names(accounts, include_accounts)
-    account_names = tuple(a["name"] for a in accounts)
+    if account_name:
+        accounts = [n for n in accounts if n["name"] == account_name]
+        if not accounts:
+            raise ValueError(f"aws account {account_name} is not found")
     settings = queries.get_app_interface_settings()
 
     # build a resource inventory for all the kube secrets managed by the
@@ -381,14 +373,24 @@ def run(
         logging.error(message)
         raise MultipleAccountNamesInDryRunException(message)
 
+    dry_run,
+    print_to_file=None,
+    enable_deletion=False,
+    thread_pool_size=10,
+    internal=None,
+    use_jump_host=True,
+    light=False,
+    vault_output_path="",
+    account_name=None,
+    defer=None,
+):
     ri, oc_map, tf, resource_specs = setup(
         dry_run,
         print_to_file,
         thread_pool_size,
         internal,
         use_jump_host,
-        account_names,
-        exclude_accounts,
+        account_name,
     )
 
     if not dry_run and oc_map and defer:
@@ -422,18 +424,14 @@ def run(
     # populate the resource inventory with latest output data
     populate_desired_state(ri, resource_specs)
 
-    actions = []
-    if oc_map:
-        actions = ob.realize_data(
-            dry_run, oc_map, ri, thread_pool_size, caller=acc_name
-        )
+    actions = ob.realize_data(dry_run, oc_map, ri, thread_pool_size, caller=acc_name)
 
     if not light and tf.should_apply:
         disable_keys(
             dry_run,
             thread_pool_size,
             disable_service_account_keys=True,
-            account_name=acc_name,
+            account_name=account_name,
         )
 
     if actions and vault_output_path:
