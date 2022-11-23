@@ -1633,7 +1633,6 @@ def terraform_resources(
     light,
     vault_output_path,
     account_name,
-    exclude_accounts,
 ):
     import reconcile.terraform_resources
 
@@ -1650,7 +1649,6 @@ def terraform_resources(
         light,
         vault_output_path,
         account_name=account_name,
-        exclude_accounts=exclude_accounts,
     )
 
 
