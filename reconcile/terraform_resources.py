@@ -195,10 +195,8 @@ def setup(
     thread_pool_size: int,
     internal: Optional[bool],
     use_jump_host: bool,
-    account_name: Optional[str],
-) -> tuple[
-    ResourceInventory, Optional[OCMap], Terraform, ExternalResourceSpecInventory
-]:
+    account_names: Optional[tuple[str]],
+) -> tuple[ResourceInventory, OC_Map, Terraform, ExternalResourceSpecInventory]:
     accounts = queries.get_aws_accounts(terraform_state=True)
     if account_name:
         accounts = [n for n in accounts if n["name"] == account_name]
@@ -381,7 +379,7 @@ def run(
     use_jump_host=True,
     light=False,
     vault_output_path="",
-    account_name=None,
+    account_name: Optional[tuple[str]] = None,
     defer=None,
 ):
     # If we are not running in dry run we don't want to run with more than one account
