@@ -384,6 +384,16 @@ def run(
     account_name=None,
     defer=None,
 ):
+    # If we are not running in dry run we don't want to run with more than one account
+    if account_name and len(account_name) > 1 and not dry_run:
+        logging.error(
+            "You can only pass two account names when running in dry-run mode"
+        )
+        sys.exit(1)
+    elif account_name:
+        account_names = account_name
+        account_name = account_name[0]
+
     ri, oc_map, tf, resource_specs = setup(
         dry_run,
         print_to_file,
