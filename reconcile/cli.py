@@ -333,6 +333,16 @@ def account_name(function):
 
     return function
 
+def account_name_multiple(function):
+    """This option can be used when more than one account needs to be passed as argument"""
+    function = click.option(
+        "--account-name",
+        default=None,
+        multiple=True,
+        help="aws account names to act on comma separated i.e.: --account-name aws-account-1 --account-name aws-account-2",
+    )(function)
+
+    return function
 
 def cloudflare_zone_name(function):
     function = click.option("--zone-name", default=None)(function)
