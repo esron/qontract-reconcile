@@ -198,10 +198,18 @@ def setup(
     account_names: Optional[tuple[str]],
 ) -> tuple[ResourceInventory, OC_Map, Terraform, ExternalResourceSpecInventory]:
     accounts = queries.get_aws_accounts(terraform_state=True)
-    if account_name:
-        accounts = [n for n in accounts if n["name"] == account_name]
-        if not accounts:
-            raise ValueError(f"aws account {account_name} is not found")
+    if account_names:
+        accounts = [n for n in accounts if n["name"] in account_names]
+        if len(accounts) < len(account_names):
+            # Some of the passed account names don't exist in app-interface
+            acc_names = tuple(
+                a
+                for a in account_names
+                if a not in tuple(account["name"] for account in accounts)
+            )
+            raise ValueError(
+                f"Accounts {acc_names} where not found in account names, check your input"
+            )
     settings = queries.get_app_interface_settings()
 
     # build a resource inventory for all the kube secrets managed by the
