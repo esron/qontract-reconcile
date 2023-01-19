@@ -93,7 +93,7 @@ def test_cannot_pass_invalid_aws_account(mocker):
         integ.run(True, account_name=("a", "b"))
 
     assert (
-        "Accounts {'b'} were provided as arguments, but not found in app-interface. Check your input for typos or for missing AWS account definitions."
+        "Accounts ('b',) were provided as arguments, but not found in app-interface. Check your input for typos or for missing AWS account definitions."
         in str(excinfo.value)
     )
 
