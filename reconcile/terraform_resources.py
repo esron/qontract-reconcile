@@ -195,7 +195,7 @@ def setup(
     thread_pool_size: int,
     internal: Optional[bool],
     use_jump_host: bool,
-    account_names: Optional[tuple[str]],
+    account_names: Optional[Collection[str]],
 ) -> tuple[ResourceInventory, OC_Map, Terraform, ExternalResourceSpecInventory]:
     accounts = queries.get_aws_accounts(terraform_state=True)
     if account_names:
