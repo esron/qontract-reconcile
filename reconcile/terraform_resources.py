@@ -387,7 +387,7 @@ def run(
     use_jump_host=True,
     light=False,
     vault_output_path="",
-    account_name: Optional[Collection[str]] = None,
+    account_name: Optional[Sequence[str]] = None,
     defer=None,
 ) -> None:
     # account_name is a tuple of account names for more detail go to
