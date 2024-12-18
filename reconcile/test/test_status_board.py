@@ -78,7 +78,22 @@ def status_board(gql_class_factory: Callable[..., StatusBoardV1]) -> StatusBoard
                                             "onboardingStatus": "OnBoarded",
                                         },
                                     ],
-                                }
+                                    "sloDocuments": [
+                                        {
+                                            "labels": '{"service": "foo", "statusBoard": "enabled"}',
+                                            "slos": [
+                                                {
+                                                    "name": "slo1",
+                                                    "SLIType": "latency",
+                                                    "SLODetails": "https://somemarkdonwurl",
+                                                    "SLOTarget": 0.99,
+                                                    "SLOTargetUnit": "percent_0_1",
+                                                    "SLISpecification": "description",
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                },
                             },
                             {"app": {"name": "oof", "onboardingStatus": "BestEffort"}},
                         ],
@@ -115,9 +130,9 @@ def test_status_board_handler(mocker: MockerFixture) -> None:
     assert h.status_board_object.summarized
 
 
-def test_get_product_apps(status_board: StatusBoardV1) -> None:
-    p = StatusBoardExporterIntegration.get_product_apps(status_board)
-    assert p == {"foo": {"foo", "foo-bar"}}
+def test_get_product_apps_services(status_board: StatusBoardV1) -> None:
+    p = StatusBoardExporterIntegration.get_product_apps_services(status_board)
+    assert p == {"foo": {"foo": {"slo1"}, "foo-bar": {}}}
 
 
 def test_get_diff_create_app() -> None:
