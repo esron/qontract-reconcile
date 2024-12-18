@@ -37,6 +37,17 @@ query StatusBoard {
               name
               onboardingStatus
             }
+            sloDocuments {
+              labels
+              slos {
+                name
+                SLIType
+                SLODetails
+                SLOTarget
+                SLOTargetUnit
+                SLISpecification
+              }
+            }
           }
         }
       }
