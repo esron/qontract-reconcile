@@ -17,6 +17,8 @@ from pydantic import (  # noqa: F401 # pylint: disable=W0611
     Json,
 )
 
+from reconcile.gql_definitions.fragments.slo_documents import SLODocuments
+
 
 DEFINITION = """
 fragment SLODocuments on SLODocument_v1 {
@@ -66,21 +68,16 @@ query StatusBoard {
             childrenApps {
               name
               onboardingStatus
+              sloDocuments {
+                ...SLODocuments
+              }
             }
             parentApp {
               name
               onboardingStatus
             }
             sloDocuments {
-              labels
-              slos {
-                name
-                SLIType
-                SLODetails
-                SLOTarget
-                SLOTargetUnit
-                SLISpecification
-              }
+              ...SLODocuments
             }
           }
         }
@@ -125,6 +122,7 @@ class ProductV1(ConfiguredBaseModel):
 class AppV1_AppV1(ConfiguredBaseModel):
     name: str = Field(..., alias="name")
     onboarding_status: str = Field(..., alias="onboardingStatus")
+    slo_documents: Optional[list[SLODocuments]] = Field(..., alias="sloDocuments")
 
 
 class NamespaceV1_AppV1_AppV1(ConfiguredBaseModel):
@@ -132,26 +130,12 @@ class NamespaceV1_AppV1_AppV1(ConfiguredBaseModel):
     onboarding_status: str = Field(..., alias="onboardingStatus")
 
 
-class SLODocumentSLOV1(ConfiguredBaseModel):
-    name: str = Field(..., alias="name")
-    sli_type: str = Field(..., alias="SLIType")
-    slo_details: str = Field(..., alias="SLODetails")
-    slo_target: float = Field(..., alias="SLOTarget")
-    slo_target_unit: str = Field(..., alias="SLOTargetUnit")
-    sli_specification: str = Field(..., alias="SLISpecification")
-
-
-class SLODocumentV1(ConfiguredBaseModel):
-    labels: Optional[Json] = Field(..., alias="labels")
-    slos: Optional[list[SLODocumentSLOV1]] = Field(..., alias="slos")
-
-
 class AppV1(ConfiguredBaseModel):
     name: str = Field(..., alias="name")
     onboarding_status: str = Field(..., alias="onboardingStatus")
     children_apps: Optional[list[AppV1_AppV1]] = Field(..., alias="childrenApps")
     parent_app: Optional[NamespaceV1_AppV1_AppV1] = Field(..., alias="parentApp")
-    slo_documents: Optional[list[SLODocumentV1]] = Field(..., alias="sloDocuments")
+    slo_documents: Optional[list[SLODocuments]] = Field(..., alias="sloDocuments")
 
 
 class NamespaceV1(ConfiguredBaseModel):

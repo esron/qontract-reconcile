@@ -32,21 +32,16 @@ query StatusBoard {
             childrenApps {
               name
               onboardingStatus
+              sloDocuments {
+                ...SLODocuments
+              }
             }
             parentApp {
               name
               onboardingStatus
             }
             sloDocuments {
-              labels
-              slos {
-                name
-                SLIType
-                SLODetails
-                SLOTarget
-                SLOTargetUnit
-                SLISpecification
-              }
+              ...SLODocuments
             }
           }
         }
