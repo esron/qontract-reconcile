@@ -19,6 +19,21 @@ from pydantic import (  # noqa: F401 # pylint: disable=W0611
 
 
 DEFINITION = """
+fragment SLODocuments on SLODocument_v1 {
+  labels
+  slos {
+    name
+    SLIType
+    SLODetails
+    SLOTarget
+    SLOTargetUnit
+    SLISpecification
+    SLOParameters {
+      window
+    }
+  }
+}
+
 query StatusBoard {
   status_board_v1{
     name

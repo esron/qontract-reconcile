@@ -1,0 +1,16 @@
+# qenerate: plugin=pydantic_v1
+
+fragment SLODocuments on SLODocument_v1 {
+  labels
+  slos {
+    name
+    SLIType
+    SLODetails
+    SLOTarget
+    SLOTargetUnit
+    SLISpecification
+    SLOParameters {
+      window
+    }
+  }
+}
